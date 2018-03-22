@@ -68,7 +68,7 @@
     (else (passibleLine? (rest L1) (rest L2)))))
 
 ;turn management section
-(define (MovePlayerTo PlayerXpos PlayerYpos Xpos ypos)
+(define (MovePlayerTo PlayerXpos PlayerYpos Xpos Ypos)
   (cond-
     ((validMove?) (ClearTileAt PlayerXpos PlayerYpos))))
 
@@ -91,14 +91,19 @@
 ;"admin" commands section
 (define (RegenerateTile B Xpos Ypos)
   (cond
-    ((passibleMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (updateBoard B Xpos Ypos (RandomTileGenerator)))
-    (else '(sorry, but the new maze isn't passible) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
+    ((passibleMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard(updateBoard B Xpos Ypos (RandomTileGenerator))))
+    (else (print '(sorry, but the new maze isn't passible)) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
 
 ;auto bord creation and printing
 (define B1 (MazeRandomaizer (BoardSize 10 10)))
 (printBoard B1)
 (newline)
 (print (passibleMaze? B1))
+
+;demo section
+(define (PathFinder B startXpos startYpos targetXpos targetYpos)
+  ((and(= startXpos startXpos) (= startYpos targetYpos))))
+
 
 ;missing comands list (names in use)
 ;passibleMaze? - its working.. BUT it's cathing only some unpassible mazes (becouse it's not trying to solve the maze but looks for 2 conected passible tiles between 2 lines (these 2 passible tiles may be completly isolated from the rest of the maze))
@@ -109,7 +114,7 @@
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I dont need that..... it’s way to simple
 ;CreateMobs (creates a given amount of mobs (by some dificulty choise or by a set number from the player or by the maze size) in the maze)
 ;MoveMobs (makes the mobs move to the player location once every 2 turnes (so you chould run away from them buts whould still lose if you're not cerefull)
-;FindPath (finds a path betwwen 2 locations and returnes the next step)
+;FindPath (finds a path betwwen 2 locations and returnes the next step) - path finder demo WIP 
 ;FindStart
 ;FindExit
 ;more will folow (maybe ;))
