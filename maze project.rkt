@@ -76,6 +76,18 @@
 (define (ClearTileAt Xpos Ypos)
   (updateBoard B Xpos Ypos '_))
 
+(define (updateBoard B Xpos Ypos input)
+    (cond
+    ((= Xpos 0) (cons (updateCol (first B) Ypos input) (rest B)))
+    (else (cons (first B) (updateBoard (rest B) (sub1 Xpos) Ypos input)))))
+
+(define (updateCol L Ypos input)
+  (cond
+    ((= Ypos 0) (cons input (rest L)))
+    (else (cons (first L) (updateCol (rest L) (sub1 Ypos) input)))))
+
+
+
 ;"admin" commands section
 (define (RegenerateTile B Xpos Ypos)
   (cond
@@ -90,7 +102,7 @@
 
 ;missing comands list (names in use)
 ;passibleMaze? - its working.. BUT it's cathing only some unpassible mazes (becouse it's not trying to solve the maze but looks for 2 conected passible tiles between 2 lines (these 2 passible tiles may be completly isolated from the rest of the maze))
-;updateBoard
+;updateBoard - done (copies from XO game update functions)
 ;validMove?
 
 ;planned commands
