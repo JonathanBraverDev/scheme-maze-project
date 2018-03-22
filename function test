@@ -1,0 +1,5 @@
+(printBoard (MazeRandomaizer (BoardSize 5 5)))
+(findTile sectorTest 0 0)
+(PrintSector sectorTest 2 2)
+(PrintSector (MazeRandomaizer (BoardSize 10 10)) 2 2)
+(PrintSector B1 5 5)
