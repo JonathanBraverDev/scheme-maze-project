@@ -79,7 +79,7 @@
 (define (updateBoard B Xpos Ypos input)
   (cond
     ((= Ypos 0) (cons (updateCol (first B) Xpos input) (rest B)))
-    (else (cons (first B) (updateBoard (rest B) (sub1 Xpos) Ypos input)))))
+    (else (cons (first B) (updateBoard (rest B) Xpos (sub1 Ypos) input)))))
 
 (define (updateCol L Xpos input)
   (cond
@@ -88,7 +88,7 @@
 
 (define (legalTile? B Xpos Ypos)
   (cond
-    ((and (< Ypos (length B)) (< Xpos (length (first B)))) #T)
+    ((and (and (or (> Ypos 0) (= Ypos 0)) (or (> Xpos 0) (= Xpos 0))) (and (< Ypos (length B)) (< Xpos (length (first B))))) #T)
     (else #F)))
 
 
@@ -108,22 +108,25 @@
 
 ;demo section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
-  (printBoard B)
+  (printBoard (updateBoard B startXpos startYpos 'U))
   (newline) (newline)
   (cond
     ((not (and (legalTile? B startXpos startYpos) (legalTile? B targetXpos targetYpos))) #F)
     ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) '()))
-    ((and (legalTile? B (add1 startXpos) startYpos) (not (equal? (findTile B (add1 startXpos) startYpos) 'X))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startYpos targetXpos 'U) (add1 startXpos) startYpos targetXpos targetYpos)))
-    ((and (legalTile? B startXpos (add1 startYpos)) (not (equal? (findTile B startXpos (add1 startYpos)) 'X))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startYpos targetXpos 'U) startXpos (add1 startYpos) targetXpos targetYpos)))
-    ((and (legalTile? B (sub1 startXpos) startYpos) (not (equal? (findTile B (sub1 startXpos) startYpos) 'X))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startYpos targetXpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos)))
-    ((and (legalTile? B startXpos (sub1 startYpos)) (not (equal? (findTile B startXpos (sub1 startYpos)) 'X))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startYpos targetXpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos)))
-    (else #F)))
+    ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos)))
+    ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos)))
+    ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos)))
+    ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos)))
+    (else (cons (cons 'DEADEND (cons startXpos (cons startYpos '()))) '()))))
 
 
 ;missing comands list (names in use)
 ;passibleMaze? - its working.. BUT it's cathing only some unpassible mazes (becouse it's not trying to solve the maze but looks for 2 conected passible tiles between 2 lines (these 2 passible tiles may be completly isolated from the rest of the maze))
 ;updateBoard - done (copies from XO game update functions)
 ;validMove?
+
+;WIP notes
+;PathFinder - i just need to make him search for a new path from the last point without the “DEADEND mark” (and maybe make him change the ‘step marker’ (the char used to mark visited tiles (U by default)))
 
 ;planned commands
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I dont need that..... it’s way to simple
