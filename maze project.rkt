@@ -140,7 +140,8 @@
     ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
     ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
     ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    (else (wallFollower B (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
+    ((empty? pathL) #F)
+    (else (wallFollower (updateBoard B startXpos startYpos 'U) (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
   
 
 
@@ -150,7 +151,7 @@
 
 ;WIP notes
 ;PathFinder - i just need to make him search for a new path from the last point without the “DEADEND" mark (and maybe make him change the ‘step marker’ (the char used to mark visited tiles (U by default)))
-;wallfollower - its working but the return list is wrong , its taking the wrong location from the path os something else.... but it works!!!!!! andrenalin is true here
+;wallfollower - it was able to solve (or discard) all the randomised mazed i threw at it but it's still unable to find the best possible path - shudent be to hard (i can make it run on all the tiles and then run on the U marks like it did on the _ and removing dead ends and again and again buts its not effective enough)
 
 ;planned commands
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple
