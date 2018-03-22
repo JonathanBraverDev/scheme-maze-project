@@ -85,6 +85,8 @@
 ;auto bord creation and printing
 (define B1 (MazeRandomaizer (BoardSize 10 10)))
 (printBoard B1)
+(newline)
+(print (passibleMaze? B1))
 
 ;missing comands list (names in use)
 ;passibleMaze? - its working.. BUT it's cathing only some unpassible mazes (becouse it's not trying to solve the maze but looks for 2 conected passible tiles between 2 lines (these 2 passible tiles may be completly isolated from the rest of the maze))
