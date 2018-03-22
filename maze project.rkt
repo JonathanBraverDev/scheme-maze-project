@@ -1,6 +1,6 @@
 (define testBoard '((_ _ _ _ _)(_ _ _ _ _)(_ _ _ _ _)(_ _ _ _ _)(_ _ _ _ _))) ;an empty 5*5 board
-(define testBoardOK '((_ X _ _ _)(_ _ X _ X)(X X _ _ _)(_ _ _ X _)(_ X X X X))) ;a passible 5*5 maze
-(define testBoardNO '((X X _ X _)(X _ X _ X)(X X X _ X)(_ X _ X _)(_ X _ X _))) ;an unpassible 5*5 maze
+(define testBoardOK '((_ X _ _ _)(_ _ X _ X)(X X _ _ _)(_ _ _ X _)(_ X X X X))) ;a passable 5*5 maze
+(define testBoardNO '((X X _ X _)(X _ X _ X)(X X X _ X)(_ X _ X _)(_ X _ X _))) ;an unpassable 5*5 maze
 
 ;new board creation
 (define (BoardSize length width) ;creates an empty board for the maze to be generated into
@@ -41,7 +41,7 @@
   (list-ref (list-ref B Ypos) Xpos))
 
 ;random section
-(define (MazeRandomaizer B) ;fulls the maze with random walls (the maze isn't alwasy passible but I'll fix that later)
+(define (MazeRandomaizer B) ;fulls the maze with random walls (the maze isn't always passable but I'll fix that later)
   (cond
     ((empty? B) (lineRandomaizer B))
     (else (cons (lineRandomaizer (first B)) (MazeRandomaizer (rest B))))))
@@ -56,25 +56,33 @@
     ((= (random 2) 1) 'X)
     (else '_)))
 
-(define (passibleMaze? B) ;a simple version of the function passibleMaze? (does NOT use maze solving)
+(define (passableMaze? B) ;a simple version of the function passableMaze? (does NOT use maze solving)
   (cond
-    ((empty? (rest (rest B))) (passibleLine? (first B) (first (rest B))))
-    (else (and (passibleLine? (first B) (first (rest B))) (passibleMaze? (rest B))))))
+    ((empty? (rest (rest B))) (passableLine? (first B) (first (rest B))))
+    (else (and (passableLine? (first B) (first (rest B))) (passableMaze? (rest B))))))
 
-(define (passibleLine? L1 L2) ;passibleMaze? helper, looks for a path between 2 lines
+(define (passableLine? L1 L2) ;passableMaze? helper, looks for a path between 2 lines
   (cond
     ((or (empty? L1) (empty? L2)) #f)
     ((and (equal? (first L1) '_) (equal? (first L2) '_)) #t)
-    (else (passibleLine? (rest L1) (rest L2)))))
+    (else (passableLine? (rest L1) (rest L2)))))
 
 ;turn management section
-(define (MovePlayerTo B PlayerXpos PlayerYpos Xpos Ypos)
+
+;(define (MovePlayerTo B PlayerXpos PlayerYpos Xpos Ypos) - not functional (yet)
+;  (cond
+;    (validMove? B Xpos Ypos) (ClearTileAt PlayerXpos PlayerYpos)))
+
+(define (validMove? B Xpos Ypos)
   (cond
-    (validMove?) (ClearTileAt PlayerXpos PlayerYpos)))
+    ((and (legalTile? B Xpos Ypos) (equal? (findTile B Xpos Ypos) 'X)) #F)
+    (else #T)))
 
 ;board management section
-(define (ClearTileAt Xpos Ypos)
-  (updateBoard B Xpos Ypos '_))
+(define (ClearTileAt B Xpos Ypos)
+  (cond
+    ((legalTile B Xpos Ypos) (updateBoard B Xpos Ypos '_))
+    (else '(ERR - (ClearTileAt B Xpos Ypos)))))
 
 (define (updateBoard B Xpos Ypos input)
   (cond
@@ -95,44 +103,46 @@
 ;"admin" commands section
 (define (RegenerateTile B Xpos Ypos)
   (cond
-    ((passibleMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard(updateBoard B Xpos Ypos (RandomTileGenerator))))
-    (else (print '(sorry, but the new maze isn't passible)) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
+    ((passableMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard(updateBoard B Xpos Ypos (RandomTileGenerator))))
+    (else (print '(sorry, but the new maze isn't passable)) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
 
 ;auto bord creation and printing
 (define B1 (MazeRandomaizer (BoardSize 10 10)))
 (printBoard B1)
 (newline)
-(print (passibleMaze? B1))
+(print (passableMaze? B1))
 (newline) (newline)
 (printBoard testBoardOK)
 
 ;demo section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
-  (printBoard (updateBoard B startXpos startYpos 'U))
-  (newline) (newline)
   (cond
-    ((not (and (legalTile? B startXpos startYpos) (legalTile? B targetXpos targetYpos))) #F)
-    ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) '()))
-    ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos)))
-    ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos)))
-    ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos)))
-    ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos)))
-    (else (cons (cons 'DEADEND (cons startXpos (cons startYpos '()))) '()))))
+    ((not (or (validMove? B startXpos startYpos) (validMove? B targetXpos targetYpos))) #F)
+    (else
+     (printBoard (updateBoard B startXpos startYpos 'U))
+     (newline) (newline)
+     (cond
+       ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) '()))
+       ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos)))
+       ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos)))
+       ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos)))
+       ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos)))
+       (else (cons (cons 'DEADEND (cons startXpos (cons startYpos '()))) '()))))))
 
 
 ;missing comands list (names in use)
-;passibleMaze? - its working.. BUT it's cathing only some unpassible mazes (becouse it's not trying to solve the maze but looks for 2 conected passible tiles between 2 lines (these 2 passible tiles may be completly isolated from the rest of the maze))
-;updateBoard - done (copies from XO game update functions)
+;passableMaze? - its working.. BUT it's catching only some unpassable mazes (because it's not trying to solve the maze but looks for 2 connected passable tiles between 2 lines (these 2 passable tiles may be completely isolated from the rest of the maze))
 ;validMove?
 
 ;WIP notes
-;PathFinder - i just need to make him search for a new path from the last point without the “DEADEND mark” (and maybe make him change the ‘step marker’ (the char used to mark visited tiles (U by default)))
+;PathFinder - i just need to make him search for a new path from the last point without the “DEADEND" mark (and maybe make him change the ‘step marker’ (the char used to mark visited tiles (U by default)))
 
 ;planned commands
-;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I dont need that..... it’s way to simple
-;CreateMobs (creates a given amount of mobs (by some dificulty choise or by a set number from the player or by the maze size) in the maze)
-;MoveMobs (makes the mobs move to the player location once every 2 turnes (so you chould run away from them buts whould still lose if you're not cerefull)
-;FindPath (finds a path betwwen 2 locations and returnes the next step) - path finder demo WIP 
+;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple
+;CreateMobs (creates a given amount of mobs (by some difficulty choice or by a set number from the player or by the maze size) in the maze)
+;MoveMobs (makes the mobs move to the player location once every 2 turns (so you chould run away from them buts whould still lose if you're not cerefull)
+;FindPath (finds a path between 2 locations and returns the next step) - pathfinder demo WIP 
 ;FindStart
 ;FindExit
-;more will folow (maybe ;))
+;error log - will get a function name and the given input, the function will print something like: "fintTile failed with (input) (input) (input)"
+;more will follow (maybe ;))
