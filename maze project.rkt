@@ -58,8 +58,8 @@
 
 ;turn management section
 (define (MovePlayerTo PlayerXpos PlayerYpos Xpos ypos)
-  (cond
-    ((validMove?) (ClearTileAt PlayerXpos PlayerYpos) 
+  (cond-
+    ((validMove?) (ClearTileAt PlayerXpos PlayerYpos))))
 
 ;board management section
 (define (ClearTileAt Xpos Ypos)
@@ -81,10 +81,10 @@
 ;validMove?
 
 ;planned commands
-;planned commands
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I dont need that..... it’s way to simple
-
 ;CreateMobs (creates a given amount of mobs (by some dificulty choise or by a set number from the player or by the maze size) in the maze)
 ;MoveMobs (makes the mobs move to the player location once every 2 turnes (so you chould run away from them buts whould still lose if you're not cerefull)
 ;FindPath (finds a path betwwen 2 locations and returnes the next step)
+;FindStart
+;FindExit
 ;more will folow (maybe ;))
