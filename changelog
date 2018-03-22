@@ -1,3 +1,11 @@
+5.2.18 11:09 (small fixes + updated planned commands list)
+
+4.2.18 10:07 (added the turn management, board management and the "admin" commands sections + added the planned commands and the missing commands lists + grammar fixes + removed sectorTest board)
+
+24.1.18 22:26 (full documentation of all functions)
+
+24.1.18 21:56 (PrintSector split into shorter functions + added auto bord creation and printing)
+
 24.1.18 18:40 (added PrintSector function)
 
 22.1.18 15:30 (start and everything but PrintSector)
