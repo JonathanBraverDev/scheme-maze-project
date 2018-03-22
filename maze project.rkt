@@ -68,9 +68,9 @@
     (else (passibleLine? (rest L1) (rest L2)))))
 
 ;turn management section
-(define (MovePlayerTo PlayerXpos PlayerYpos Xpos Ypos)
-  (cond-
-    ((validMove?) (ClearTileAt PlayerXpos PlayerYpos))))
+(define (MovePlayerTo B PlayerXpos PlayerYpos Xpos Ypos)
+  (cond
+    (validMove?) (ClearTileAt PlayerXpos PlayerYpos))))
 
 ;board management section
 (define (ClearTileAt Xpos Ypos)
@@ -87,6 +87,10 @@
     (else (cons (first L) (updateCol (rest L) (sub1 Ypos) input)))))
 
 
+(define (legalTile? B Xpos Ypos)
+  (cond
+    ((and (< Ypos (length B)) (< Xpos (length (first B)))) #T)
+    (else #F)))
 
 ;"admin" commands section
 (define (RegenerateTile B Xpos Ypos)
@@ -99,10 +103,18 @@
 (printBoard B1)
 (newline)
 (print (passibleMaze? B1))
+(newline) (newline)
+(printBoard testBoardOK)
 
 ;demo section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
-  ((and(= startXpos startXpos) (= startYpos targetYpos))))
+  (cond
+   ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (startXpos startYpos) '()))
+   ((legalTile? B1 (add1 startXpos) startYpos) (not (equal? (findTile B (add1 startXpos) startYpos) 'X)) (cons (startXpos startYpos) (PathFinder (updateBoard B startXpos targetXpos 'S) (add1 startXpos) startYpos targetXpos targetYpos)))
+   ((legalTile? B1 startXpos (add1 startYpos)) (not (equal? (findTile B startXpos (add1 startYpos)) 'X)) (cons (startXpos startYpos) (PathFinder (updateBoard B startXpos targetXpos 'S) startXpos (add1 startYpos) targetXpos targetYpos)))
+   ((legalTile? B1 (sub1 startXpos) startYpos) (not (equal? (findTile B (sub1 startXpos) startYpos) 'X)) (cons (startXpos startYpos) (PathFinder (updateBoard B startXpos targetXpos 'S) (sub1 startXpos) startYpos targetXpos targetYpos)))
+   ((legalTile? B1 startXpos (sub1 startYpos)) (not (equal? (findTile B startXpos (sub1 startYpos)) 'X)) (cons (startXpos startYpos) (PathFinder (updateBoard B startXpos targetXpos 'S) startXpos (sub1 startYpos) targetXpos targetYpos)))
+   (else #F)))
 
 
 ;missing comands list (names in use)
