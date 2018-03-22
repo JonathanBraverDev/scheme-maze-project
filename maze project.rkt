@@ -56,6 +56,17 @@
     ((= (random 2) 1) 'X)
     (else '_)))
 
+(define (passibleMaze? B) ;a simple version of the function passibleMaze? (does NOT use maze solving)
+  (cond
+    ((empty? (rest (rest B))) (passibleLine? (first B) (first (rest B))))
+    (else (and (passibleLine? (first B) (first (rest B))) (passibleMaze? (rest B))))))
+
+(define (passibleLine? L1 L2) ;passibleMaze? helper, looks for a path between 2 lines
+  (cond
+    ((or (empty? L1) (empty? L2)) #f)
+    ((and (equal? (first L1) '_) (equal? (first L2) '_)) #t)
+    (else (passibleLine? (rest L1) (rest L2)))))
+
 ;turn management section
 (define (MovePlayerTo PlayerXpos PlayerYpos Xpos ypos)
   (cond-
@@ -76,7 +87,7 @@
 (printBoard B1)
 
 ;missing comands list (names in use)
-;passibleMaze?
+;passibleMaze? - its working.. BUT it's cathing only some unpassible mazes (becouse it's not trying to solve the maze but looks for 2 conected passible tiles between 2 lines (these 2 passible tiles may be completly isolated from the rest of the maze))
 ;updateBoard
 ;validMove?
 
