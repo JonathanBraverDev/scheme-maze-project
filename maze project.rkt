@@ -21,15 +21,20 @@
            (printBoard (rest B)))))
 
 (define (PrintSector B Xpos Ypos) ;prints a 5*5 square, the given location is the center 
-  (print (cons (findTile B (- Xpos 2) (- Ypos 2)) (cons (findTile B (- Xpos 1) (- Ypos 2)) (cons (findTile B Xpos (- Ypos 2)) (cons (findTile B (+ Xpos 1) (- Ypos 2)) (cons (findTile B (+ Xpos 2) (- Ypos 2)) '()))))))
+  (print (printSectorLine B Xpos (- Ypos 2) 0))
   (newline)
-  (print (cons (findTile B (- Xpos 2) (- Ypos 1)) (cons (findTile B (- Xpos 1) (- Ypos 1)) (cons (findTile B Xpos (- Ypos 1)) (cons (findTile B (+ Xpos 1) (- Ypos 1)) (cons (findTile B (+ Xpos 2) (- Ypos 1)) '()))))))
+  (print (printSectorLine B Xpos (- Ypos 1) 0))
   (newline)
-  (print (cons (findTile B (- Xpos 2) Ypos) (cons (findTile B (- Xpos 1) Ypos) (cons (findTile B Xpos Ypos) (cons (findTile B (+ Xpos 1) Ypos) (cons (findTile B (+ Xpos 2) Ypos) '()))))))
+  (print (printSectorLine B Xpos Ypos 0))
   (newline)
-  (print (cons (findTile B (- Xpos 2) (+ Ypos 1)) (cons (findTile B (- Xpos 1) (+ Ypos 1)) (cons (findTile B Xpos (+ Ypos 1)) (cons (findTile B (+ Xpos 1) (+ Ypos 1)) (cons (findTile B (+ Xpos 2) (+ Ypos 1)) '()))))))
+  (print (printSectorLine B Xpos (+ Ypos 1) 0))
   (newline)
-  (print (cons (findTile B (- Xpos 2) (+ Ypos 2)) (cons (findTile B (- Xpos 1) (+ Ypos 2)) (cons (findTile B Xpos (+ Ypos 2)) (cons (findTile B (+ Xpos 1) (+ Ypos 2)) (cons (findTile B (+ Xpos 2) (+ Ypos 2)) '())))))))
+  (print (printSectorLine B Xpos (+ Ypos 2) 0)))
+
+(define (printSectorLine B Xpos Ypos counter)
+  (cond
+    ((= 5 counter) '())
+    (else (cons (findTile B (+ Xpos (+ -2 counter)) Ypos) (printSectorLine B Xpos Ypos (add1 counter))))))
 
 (define (findTile B Xpos Ypos)
   (list-ref (list-ref B Ypos) Xpos))
@@ -48,3 +53,6 @@
   (cond
     ((= (random 2) 1) 'X)
     (else '_)))
+
+(define B1 (MazeRandomaizer (BoardSize 10 10)))
+(printBoard B1)
