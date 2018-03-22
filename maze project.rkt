@@ -103,8 +103,8 @@
 ;"admin" commands section
 (define (RegenerateTile B Xpos Ypos)
   (cond
-    ((passableMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard(updateBoard B Xpos Ypos (RandomTileGenerator))))
-    (else (print '(sorry, but the new maze isn't passable)) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
+    ((passableMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))
+    (else (print '(sorry, but the new maze isn't passable)) (newline) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
 
 ;auto bord creation and printing
 (define B1 (MazeRandomaizer (BoardSize 10 10)))
@@ -117,7 +117,7 @@
 ;demo section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
   (cond
-    ((not (or (validMove? B startXpos startYpos) (validMove? B targetXpos targetYpos))) #F)
+    ((or (validMove? B startXpos startYpos) (validMove? B targetXpos targetYpos)) #F)
     (else
      (printBoard (updateBoard B startXpos startYpos 'U))
      (newline) (newline)
@@ -129,6 +129,20 @@
        ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos)))
        (else (cons (cons 'DEADEND (cons startXpos (cons startYpos '()))) '()))))))
 
+(define (wallFollower B startXpos startYpos targetXpos targetYpos pathL)
+  (printBoard (updateBoard B startXpos startYpos 'U))
+  (newline)
+  (print pathL)
+  (newline) (newline)
+  (cond
+    ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) pathL))
+    ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    (else (wallFollower B (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
+  
+
 
 ;missing comands list (names in use)
 ;passableMaze? - its working.. BUT it's catching only some unpassable mazes (because it's not trying to solve the maze but looks for 2 connected passable tiles between 2 lines (these 2 passable tiles may be completely isolated from the rest of the maze))
@@ -136,6 +150,7 @@
 
 ;WIP notes
 ;PathFinder - i just need to make him search for a new path from the last point without the “DEADEND" mark (and maybe make him change the ‘step marker’ (the char used to mark visited tiles (U by default)))
+;wallfollower - its working but the return list is wrong , its taking the wrong location from the path os something else.... but it works!!!!!! andrenalin is true here
 
 ;planned commands
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple
