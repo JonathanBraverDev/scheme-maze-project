@@ -1,0 +1,137 @@
+(define b1 '((X _ O) (O O X) (O O X)))
+(define b2 '((_ _ _) (_ _ _) (_ _ _)))
+
+(define (line n)
+  (cond
+    ((= n 0) '())
+    (else (cons '_ (line (sub1 n))))))
+
+(define (board n m)
+  (cond
+    ((= m 0) '())
+    (else (cons (line n) (board n (sub1 m))))))
+
+(define (squareBoard n)
+  (board n n))
+
+(define (isWinRow L turn)
+  (cond
+    ((empty? L) #t)
+    ((equal? (first L) turn) (isWinRow (rest L) turn))
+    (else #f)))
+
+(define (isWinRows B turn)
+  (cond
+    ((empty? B) #f)
+    ((isWinRow (first B) turn) #t)
+    (else (isWinRows (rest B) turn))))
+
+(define (isWinCol B i turn)
+  (cond
+    ((= (length B) i) #t)
+    ((equal? (list-ref (first B) i) turn) (isWinCol (rest B) i turn))
+    (else #f)))
+
+(define (isWinCols B i turn)
+  (cond
+    ((= (length B) i) #f)
+    ((isWinCol B i turn) #t)
+    (else (isWinCols B (add1 i) turn))))
+
+(define (isWinMainDia B i turn)
+  (cond
+    ((= (length B) i) #t)
+    ((equal? (list-ref (list-ref B i) i) turn) (isWinMainDia B (add1 i) turn))
+    (else #f)))
+
+(define (isWinSecDia B i turn)
+  (cond
+    ((= (length B) i) #t)
+    ((equal? (list-ref (list-ref B i) (sub1 (- (length B) i))) turn) (isWinSecDia B (add1 i) turn))
+    (else #f)))
+
+(define (isWin? B turn)
+  (cond
+    ((isWinRows B turn) #t)
+    ((isWinCols B 0 turn) #t)
+    ((isWinMainDia B 0 turn) #t)
+    ((isWinSecDia B 0 turn) #t)
+    (else #f)))
+
+(define (isFullL? L)
+  (cond
+    ((empty? L) #t)
+    ((not (equal? (first L) '_)) (isFullL? (rest L)))
+    (else #f)))
+
+(define (isFullB? B)
+  (cond
+    ((empty? B) #t)
+    ((isFullL? (first B)) (isFullB? (rest B)))
+    (else #f)))
+
+(define (main board turn)
+  (cond
+    ((isWin? board turn) (print (switch turn))
+                         (print '_Win))
+    ((isFullB? board) '(It's a tie))
+    (else (printBoard board)
+          (print '(enter place row and col))
+          (newline)
+          (play board (read) (read) turn))))
+
+(define (play board row col turn)
+  (cond
+    ((leagal? board (sub1 row) (sub1 col)) (main (update board (sub1 row) (sub1 col) turn) (switch turn)))
+    (else (print '(place not leagal))
+          (newline)
+          (print '(enter place row and col))
+          (newline)
+          (play board (read) (read) turn))))
+
+(define (printLine L)
+  (cond
+    ((empty? L) (newline))
+    ((= (length L) 1) (print (first L))
+                      (printLine (rest L)))
+    (else (print (first L))
+           (print '/)
+           (printLine (rest L)))))
+
+(define (printBoard B)
+  (cond
+    ((empty? B) '())
+    (else (printLine (first B))
+          (printBoard (rest B)))))
+ 
+(define (leagal? B row col)
+  (cond
+    ((or (> row (length B)) (> col (length B))) #f)
+    ((or (= row (length B)) (= col (length B))) #f)
+    ((or (< row 0) (< col 0)) #f)
+    (else (equal? (list-ref (list-ref B row) col) '_)))) 
+
+(define (updateCol L col turn)
+  (cond
+    ((= col 0) (cons turn (rest L)))
+    (else (cons (first L) (updateCol (rest L) (sub1 col) turn)))))
+
+(define (update B row col turn)
+  (cond
+    ((= row 0) (cons (updateCol (first B) col turn) (rest B)))
+    (else (cons (first B) (update (rest B) (sub1 row) col turn)))))
+
+(define (switch turn)
+  (cond
+    ((equal? turn 'x) 'o)
+    ((equal? turn 'X) 'O)
+    ((equal? turn 'o) 'x)
+    ((equal? turn 'O) 'X)
+    (else 'Error)))
+
+(define (startGame)
+  (print '(In which size of board do you want to play?))
+  (newline)
+  (print '(*The regular board is 3*3))
+  (newline)
+  (main (squareBoard (read)) 'x))
