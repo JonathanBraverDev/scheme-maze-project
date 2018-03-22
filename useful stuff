@@ -1,0 +1,5 @@
+(if (= 1 (length lst)) (do) (else))
+all DRracket functions
+https://en.wikipedia.org/wiki/Maze_solving_algorithm
+https://en.wikipedia.org/wiki/Maze_generation_algorithm
+racket maze solver in github
