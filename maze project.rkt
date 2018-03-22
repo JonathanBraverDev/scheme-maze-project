@@ -15,11 +15,11 @@
 
 ;printing section
 (define (printBoard B) ;prints the whole maze
-   (cond
-     ((empty? (rest B)) (print (first B)))
-     (else (print (first B))
-           (newline)
-           (printBoard (rest B)))))
+  (cond
+    ((empty? (rest B)) (print (first B)))
+    (else (print (first B))
+          (newline)
+          (printBoard (rest B)))))
 
 (define (PrintSector B Xpos Ypos) ;prints a 5*5 square, the given location is the center 
   (print (printSectorLine B Xpos (- Ypos 2) 0))
@@ -47,7 +47,7 @@
     (else (cons (lineRandomaizer (first B)) (MazeRandomaizer (rest B))))))
 
 (define (lineRandomaizer L) ;MazeRandomaizer helper, runs the RandomTileGenerator for each tile in one line
-    (cond
+  (cond
     ((empty? L) '())
     (else (cons (RandomTileGenerator) (lineRandomaizer (rest L))))))
 
@@ -70,27 +70,27 @@
 ;turn management section
 (define (MovePlayerTo B PlayerXpos PlayerYpos Xpos Ypos)
   (cond
-    (validMove?) (ClearTileAt PlayerXpos PlayerYpos))))
+    (validMove?) (ClearTileAt PlayerXpos PlayerYpos)))
 
 ;board management section
 (define (ClearTileAt Xpos Ypos)
   (updateBoard B Xpos Ypos '_))
 
 (define (updateBoard B Xpos Ypos input)
-    (cond
-    ((= Xpos 0) (cons (updateCol (first B) Ypos input) (rest B)))
+  (cond
+    ((= Ypos 0) (cons (updateCol (first B) Xpos input) (rest B)))
     (else (cons (first B) (updateBoard (rest B) (sub1 Xpos) Ypos input)))))
 
-(define (updateCol L Ypos input)
+(define (updateCol L Xpos input)
   (cond
-    ((= Ypos 0) (cons input (rest L)))
-    (else (cons (first L) (updateCol (rest L) (sub1 Ypos) input)))))
-
+    ((= Xpos 0) (cons input (rest L)))
+    (else (cons (first L) (updateCol (rest L) (sub1 Xpos) input)))))
 
 (define (legalTile? B Xpos Ypos)
   (cond
     ((and (< Ypos (length B)) (< Xpos (length (first B)))) #T)
     (else #F)))
+
 
 ;"admin" commands section
 (define (RegenerateTile B Xpos Ypos)
@@ -108,13 +108,16 @@
 
 ;demo section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
+  (printBoard B)
+  (newline) (newline)
   (cond
-   ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (startXpos startYpos) '()))
-   ((legalTile? B1 (add1 startXpos) startYpos) (not (equal? (findTile B (add1 startXpos) startYpos) 'X)) (cons (startXpos startYpos) (PathFinder (updateBoard B startXpos targetXpos 'S) (add1 startXpos) startYpos targetXpos targetYpos)))
-   ((legalTile? B1 startXpos (add1 startYpos)) (not (equal? (findTile B startXpos (add1 startYpos)) 'X)) (cons (startXpos startYpos) (PathFinder (updateBoard B startXpos targetXpos 'S) startXpos (add1 startYpos) targetXpos targetYpos)))
-   ((legalTile? B1 (sub1 startXpos) startYpos) (not (equal? (findTile B (sub1 startXpos) startYpos) 'X)) (cons (startXpos startYpos) (PathFinder (updateBoard B startXpos targetXpos 'S) (sub1 startXpos) startYpos targetXpos targetYpos)))
-   ((legalTile? B1 startXpos (sub1 startYpos)) (not (equal? (findTile B startXpos (sub1 startYpos)) 'X)) (cons (startXpos startYpos) (PathFinder (updateBoard B startXpos targetXpos 'S) startXpos (sub1 startYpos) targetXpos targetYpos)))
-   (else #F)))
+    ((not (and (legalTile? B startXpos startYpos) (legalTile? B targetXpos targetYpos))) #F)
+    ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) '()))
+    ((and (legalTile? B (add1 startXpos) startYpos) (not (equal? (findTile B (add1 startXpos) startYpos) 'X))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startYpos targetXpos 'U) (add1 startXpos) startYpos targetXpos targetYpos)))
+    ((and (legalTile? B startXpos (add1 startYpos)) (not (equal? (findTile B startXpos (add1 startYpos)) 'X))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startYpos targetXpos 'U) startXpos (add1 startYpos) targetXpos targetYpos)))
+    ((and (legalTile? B (sub1 startXpos) startYpos) (not (equal? (findTile B (sub1 startXpos) startYpos) 'X))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startYpos targetXpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos)))
+    ((and (legalTile? B startXpos (sub1 startYpos)) (not (equal? (findTile B startXpos (sub1 startYpos)) 'X))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startYpos targetXpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos)))
+    (else #F)))
 
 
 ;missing comands list (names in use)
