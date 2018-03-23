@@ -106,6 +106,7 @@
     ((passableMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))
     (else (print '(sorry, but the new maze isn't passable)) (newline) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
 
+
 ;auto bord creation and printing
 (define B1 (MazeRandomaizer (BoardSize 10 10)))
 (printBoard B1)
@@ -115,19 +116,11 @@
 (printBoard testBoardOK)
 
 ;demo section
+
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
   (cond
-    ((or (validMove? B startXpos startYpos) (validMove? B targetXpos targetYpos)) #F)
-    (else
-     (printBoard (updateBoard B startXpos startYpos 'U))
-     (newline) (newline)
-     (cond
-       ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) '()))
-       ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos)))
-       ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos)))
-       ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos)))
-       ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) (cons (cons startXpos (cons startYpos '())) (PathFinder (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos)))
-       (else (cons (cons 'DEADEND (cons startXpos (cons startYpos '()))) '()))))))
+    ((not (or (validMove? B startXpos startYpos) (validMove? B targetXpos targetYpos))) #F)
+    (else (wallFollower B  startXpos startYpos targetXpos targetYpos '()))))
 
 (define (wallFollower B startXpos startYpos targetXpos targetYpos pathL)
   (printBoard (updateBoard B startXpos startYpos 'U))
@@ -135,7 +128,7 @@
   (print pathL)
   (newline) (newline)
   (cond
-    ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) pathL))
+    ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) #T))
     ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
     ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
     ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
@@ -161,4 +154,5 @@
 ;FindStart
 ;FindExit
 ;error log - will get a function name and the given input, the function will print something like: "fintTile failed with (input) (input) (input)"
+;reverseMaze - will change all X tiles to _ and _ to X in a given board
 ;more will follow (maybe ;))
