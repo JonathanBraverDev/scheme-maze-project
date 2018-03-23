@@ -1,5 +1,6 @@
 (if (= 1 (length lst)) (do) (else))
-all DRracket functions
+https://docs.racket-lang.org/racket-cheat/index.html - all DRracket functions
 https://en.wikipedia.org/wiki/Maze_solving_algorithm
 https://en.wikipedia.org/wiki/Maze_generation_algorithm
-racket maze solver in github
+https://docs.racket-lang.org/racket-cheat/index.html - racket maze solver in github
+https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet - .md format cheatsheet
