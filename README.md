@@ -5,6 +5,8 @@ chenglog:
 
 
 # 23.3.18 14:29 
-  *pathFinder now chekes the input and lunches wallFolower to solve the maze
-  *changed final output of wallfollower to boolean (#T or #F only)
-  *added 1 planned function
+  pathFinder now chekes the input and lunches wallFolower to solve the maze
+  
+  changed final output of wallfollower to boolean (#T or #F only)
+  
+  added 1 planned function
