@@ -52,12 +52,12 @@ chenglog:
   small fixes + updated planned commands list
 
 
-#4.2.18 10:07 
+# 4.2.18 10:07 
   added the turn management, board management and the "admin" commands sections + added the planned commands and the missing commands lists + grammar fixes + removed sectorTest board
 
 
 # 24.1.18 22:26 
-  *full documentation of all functions
+  full documentation of all functions
 
 
 # 24.1.18 21:56 
