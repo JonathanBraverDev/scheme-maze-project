@@ -1,8 +1,6 @@
 # scheme-maze-project
 11th grade school project
 
-chenglog:
-
 
 # 23.3.18 14:29 
   pathFinder now chekes the input and lunches wallFolower to solve the maze
