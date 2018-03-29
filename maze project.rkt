@@ -128,31 +128,50 @@
   (print pathL)
   (newline) (newline)
   (cond
-    ((and (= startXpos targetXpos) (= startYpos targetYpos)) (cons (cons startXpos (cons startYpos '())) #T))
-    ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((and (= startXpos targetXpos) (= startYpos targetYpos)) #T)
+    ((GoLeft?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoDown?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoRight? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoUp?    B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
     ((empty? pathL) #F)
     (else (wallFollower (updateBoard B startXpos startYpos 'U) (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
-  
+
+(define (GoUp? B startXpos startYpos)
+  (cond
+    ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) #T)
+    (else #F )))
+
+(define (GoDown? B startXpos startYpos)
+  (cond
+    ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) #T)
+    (else #F)))
+
+(define (GoLeft? B startXpos startYpos)
+  (cond
+    ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) #T)
+    (else #F)))
+
+(define (GoRight? B startXpos startYpos)
+  (cond
+    ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) #T)
+    (else #F)))
+
 
 
 ;missing comands list (names in use)
-;passableMaze? - its working.. BUT it's catching only some unpassable mazes (because it's not trying to solve the maze but looks for 2 connected passable tiles between 2 lines (these 2 passable tiles may be completely isolated from the rest of the maze))
-;validMove?
+;none!!! yay!!!
 
 ;WIP notes
-;PathFinder - i just need to make him search for a new path from the last point without the “DEADEND" mark (and maybe make him change the ‘step marker’ (the char used to mark visited tiles (U by default)))
-;wallfollower - it was able to solve (or discard) all the randomised mazed i threw at it but it's still unable to find the best possible path - shudent be to hard (i can make it run on all the tiles and then run on the U marks like it did on the _ and removing dead ends and again and again buts its not effective enough)
+;PathFinder - changed to just being input cheker
+;wallfollower - 100% acurate but super ineffective (its ok for esting mazes but i'll have to make sometinh else for the mob's movement and the whole "player chasing" part)
 
 ;planned commands
-;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple
+;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple (just move the printsector to the new player location)
 ;CreateMobs (creates a given amount of mobs (by some difficulty choice or by a set number from the player or by the maze size) in the maze)
 ;MoveMobs (makes the mobs move to the player location once every 2 turns (so you chould run away from them buts whould still lose if you're not cerefull)
-;FindPath (finds a path between 2 locations and returns the next step) - pathfinder demo WIP 
+;FindPath (finds a path between 2 locations and returns the next step) - still a nope... its only #T or #F for now
 ;FindStart
 ;FindExit
-;error log - will get a function name and the given input, the function will print something like: "fintTile failed with (input) (input) (input)"
+;error log - will get a function name and the given input, the function will print something like: "pintTile failed with (input) (input) (input)"
 ;reverseMaze - will change all X tiles to _ and _ to X in a given board
 ;more will follow (maybe ;))
