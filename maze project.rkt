@@ -177,6 +177,7 @@
 ;WIP notes
 ;wallfollower - now it's realy a wall follower
 
+
 ;planned commands
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple (just move the printsector to the new player location)
 ;CreateMobs (creates a given amount of mobs (by some difficulty choice or by a set number from the player or by the maze size) in the maze)
