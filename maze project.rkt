@@ -113,7 +113,7 @@
     ((empty? startL) #F)
     ((> index (sub1(length exitL))) (MazeChecker B (rest startL) exitL 0))
     ((PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0) #T)
-    (else (MazeChecker B startL exitL (add1 index)))))
+    (else (MazeChecker B startL exitL add1 index))))
 
 ;"admin" commands section
 (define (RegenerateTile B Xpos Ypos)
@@ -129,7 +129,42 @@
 (printBoard testBoardNO)
 
 ;demo section
-;empty? #T ;)
+
+(define (PathFinder B startXpos startYpos targetXpos targetYpos)
+  (cond
+    ((not (or (validMove? B startXpos startYpos) (validMove? B targetXpos targetYpos))) #F)
+    (else (wallFollower B  startXpos startYpos targetXpos targetYpos '()))))
+
+(define (wallFollower B startXpos startYpos targetXpos targetYpos pathL)
+  (cond
+    ((and (= startXpos targetXpos) (= startYpos targetYpos)) #T)
+    ((GoLeft?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoDown?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoRight? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoUp?    B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((empty? pathL) #F)
+    (else (wallFollower (updateBoard B startXpos startYpos 'U) (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
+
+(define (GoUp? B startXpos startYpos)
+  (cond
+    ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) #T)
+    (else #F )))
+
+(define (GoDown? B startXpos startYpos)
+  (cond
+    ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) #T)
+    (else #F)))
+
+(define (GoLeft? B startXpos startYpos)
+  (cond
+    ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) #T)
+    (else #F)))
+
+(define (GoRight? B startXpos startYpos)
+  (cond
+    ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) #T)
+    (else #F)))
+
 
 
 ;missing comands list (names in use)
