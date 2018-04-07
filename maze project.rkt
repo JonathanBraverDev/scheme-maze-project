@@ -124,10 +124,10 @@
 (define (wallFollower B startXpos startYpos targetXpos targetYpos pathL)
   (cond
     ((and (= startXpos targetXpos) (= startYpos targetYpos)) #T)
-    ((GoLeft?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoDown?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoRight? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoUp?    B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoRight?B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpo targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoUp?   B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoLeft? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoDown? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
     ((empty? pathL) #F)
     (else (wallFollower (updateBoard B startXpos startYpos 'U) (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
 
@@ -174,7 +174,7 @@
 
 
 ;WIP notes
-;wallfollower - it's not realy a wall follower it could save processing time
+;wallfollower - now it's realy a wall follower
 
 ;planned commands
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple (just move the printsector to the new player location)
