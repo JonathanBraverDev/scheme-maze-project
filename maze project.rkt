@@ -56,27 +56,19 @@
     ((= (random 2) 1) 'X)
     (else '_)))
 
-(define (passableMaze? B) ;a simple version of the function passableMaze? (does NOT use maze solving)
-  (cond
-    ((empty? (rest (rest B))) (passableLine? (first B) (first (rest B))))
-    (else (and (passableLine? (first B) (first (rest B))) (passableMaze? (rest B))))))
-
-(define (passableLine? L1 L2) ;passableMaze? helper, looks for a path between 2 lines
-  (cond
-    ((or (empty? L1) (empty? L2)) #f)
-    ((and (equal? (first L1) '_) (equal? (first L2) '_)) #t)
-    (else (passableLine? (rest L1) (rest L2)))))
 
 ;turn management section
-
-;(define (MovePlayerTo B PlayerXpos PlayerYpos Xpos Ypos) - not functional (yet)
-;  (cond
-;    (validMove? B Xpos Ypos) (ClearTileAt PlayerXpos PlayerYpos)))
+(define (MovePlayerTo B PlayerXpos PlayerYpos Xpos Ypos)
+  (cond
+    (validMove? B Xpos Ypos) (ClearTileAt PlayerXpos PlayerYpos)))
 
 (define (validMove? B Xpos Ypos)
   (cond
     ((and (legalTile? B Xpos Ypos) (equal? (findTile B Xpos Ypos) 'X)) #F)
     (else #T)))
+
+;(define (play))
+  
 
 ;board management section
 (define (ClearTileAt B Xpos Ypos)
@@ -99,6 +91,29 @@
     ((and (and (or (> Ypos 0) (= Ypos 0)) (or (> Xpos 0) (= Xpos 0))) (and (< Ypos (length B)) (< Xpos (length (first B))))) #T)
     (else #F)))
 
+(define (findEntries B index)
+  (cond
+    ((> index (sub1 (length (first B)))) '())
+    ((findEdgeHelper (first (reverse B)) index) (cons index (findEntries B (add1 index))))
+    (else (findEntries B (add1 index)))))
+
+(define (findExits B index)
+  (cond
+    ((> index (sub1 (length (first B)))) '())
+    ((findEdgeHelper (first B) index) (cons index (findExits B (add1 index))))
+    (else (findExits B (add1 index)))))
+
+(define (findEdgeHelper L index)
+  (cond
+    ((equal? (list-ref L index) '_) #T)
+    (else #F)))
+
+(define (MazeChecker B startL exitL index)
+  (cond
+    ((empty? startL) #F)
+    ((> index (sub1(length exitL))) (MazeChecker B (rest startL) exitL 0))
+    ((PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0) #T)
+    (else (MazeChecker B startL exitL (add1 index)))))
 
 ;"admin" commands section
 (define (RegenerateTile B Xpos Ypos)
@@ -110,52 +125,11 @@
 ;auto bord creation and printing
 (define B1 (MazeRandomaizer (BoardSize 10 10)))
 (printBoard B1)
-(newline)
-(print (passableMaze? B1))
-(newline) (newline)
-(printBoard testBoardOK)
+(newline)(newline)
+(printBoard testBoardNO)
 
 ;demo section
-
-(define (PathFinder B startXpos startYpos targetXpos targetYpos)
-  (cond
-    ((not (or (validMove? B startXpos startYpos) (validMove? B targetXpos targetYpos))) #F)
-    (else (wallFollower B  startXpos startYpos targetXpos targetYpos '()))))
-
-(define (wallFollower B startXpos startYpos targetXpos targetYpos pathL)
-  (printBoard (updateBoard B startXpos startYpos 'U))
-  (newline)
-  (print pathL)
-  (newline) (newline)
-  (cond
-    ((and (= startXpos targetXpos) (= startYpos targetYpos)) #T)
-    ((GoLeft?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoDown?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoRight? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoUp?    B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((empty? pathL) #F)
-    (else (wallFollower (updateBoard B startXpos startYpos 'U) (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
-
-(define (GoUp? B startXpos startYpos)
-  (cond
-    ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) #T)
-    (else #F )))
-
-(define (GoDown? B startXpos startYpos)
-  (cond
-    ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) #T)
-    (else #F)))
-
-(define (GoLeft? B startXpos startYpos)
-  (cond
-    ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) #T)
-    (else #F)))
-
-(define (GoRight? B startXpos startYpos)
-  (cond
-    ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) #T)
-    (else #F)))
-
+;empty? #T ;)
 
 
 ;missing comands list (names in use)
