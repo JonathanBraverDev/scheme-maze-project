@@ -115,21 +115,7 @@
     ((PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0) #T)
     (else (MazeChecker B startL exitL (add1 index)))))
 
-;"admin" commands section
-(define (RegenerateTile B Xpos Ypos)
-  (cond
-    ((passableMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))
-    (else (print '(sorry, but the new maze isn't passable)) (newline) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
-
-
-;auto bord creation and printing
-(define B1 (MazeRandomaizer (BoardSize 10 10)))
-(printBoard B1)
-(newline)(newline)
-(printBoard testBoardNO)
-
-;demo section
-
+;pathfinding section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
   (cond
     ((not (or (validMove? B startXpos startYpos) (validMove? B targetXpos targetYpos))) #F)
@@ -166,21 +152,37 @@
     (else #F)))
 
 
+;"admin" commands section
+(define (RegenerateTile B Xpos Ypos)
+  (cond
+    ((passableMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))
+    (else (print '(sorry, but the new maze isn't passable)) (newline) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
+
+
+;auto bord creation and printing
+(define B1 (MazeRandomaizer (BoardSize 10 10)))
+(printBoard B1)
+(newline)(newline)
+(printBoard testBoardNO)
+
+;demo section
+;empty? #T ;)
+
 
 ;missing comands list (names in use)
 ;none!!! yay!!!
 
+
 ;WIP notes
-;PathFinder - changed to just being input cheker
-;wallfollower - 100% acurate but super ineffective (its ok for esting mazes but i'll have to make sometinh else for the mob's movement and the whole "player chasing" part)
+;wallfollower - it's not realy a wall follower it could save processing time
 
 ;planned commands
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple (just move the printsector to the new player location)
 ;CreateMobs (creates a given amount of mobs (by some difficulty choice or by a set number from the player or by the maze size) in the maze)
 ;MoveMobs (makes the mobs move to the player location once every 2 turns (so you chould run away from them buts whould still lose if you're not cerefull)
 ;FindPath (finds a path between 2 locations and returns the next step) - still a nope... its only #T or #F for now
-;FindStart
-;FindExit
+;FindStart - done!
+;FindExit - done!
 ;error log - will get a function name and the given input, the function will print something like: "pintTile failed with (input) (input) (input)"
 ;reverseMaze - will change all X tiles to _ and _ to X in a given board
 ;more will follow (maybe ;))
