@@ -115,6 +115,7 @@
     ((PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0) #T)
     (else (MazeChecker B startL exitL (add1 index)))))
 
+
 ;pathfinding section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
   (cond
