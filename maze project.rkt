@@ -71,11 +71,6 @@
   
 
 ;board management section
-(define (ClearTileAt B Xpos Ypos)
-  (cond
-    ((legalTile? B Xpos Ypos) (updateBoard B Xpos Ypos '_))
-    (else '(ERR - (ClearTileAt B Xpos Ypos)))))
-
 (define (updateBoard B Xpos Ypos input)
   (cond
     ((= Ypos 0) (cons (updateCol (first B) Xpos input) (rest B)))
@@ -163,6 +158,11 @@
   (cond
     ((passableMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))
     (else (print '(sorry, but the new maze isn't passable)) (newline) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
+
+(define (ClearTileAt B Xpos Ypos)
+  (cond
+    ((legalTile? B Xpos Ypos) (updateBoard B Xpos Ypos '_))
+    (else (print '(invalid tile)))))
 
 
 ;auto bord creation and printing
