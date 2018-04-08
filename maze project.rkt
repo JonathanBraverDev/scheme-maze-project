@@ -73,7 +73,7 @@
 ;board management section
 (define (ClearTileAt B Xpos Ypos)
   (cond
-    ((legalTile B Xpos Ypos) (updateBoard B Xpos Ypos '_))
+    ((legalTile? B Xpos Ypos) (updateBoard B Xpos Ypos '_))
     (else '(ERR - (ClearTileAt B Xpos Ypos)))))
 
 (define (updateBoard B Xpos Ypos input)
@@ -163,6 +163,8 @@
 ;auto bord creation and printing
 (define B1 (MazeRandomaizer (BoardSize 10 10)))
 (printBoard B1)
+(newline)
+(MazeChecker B1 (findEntries B1 0) (findExits B1 0) 0)
 (newline)(newline)
 (printBoard testBoardNO)
 
