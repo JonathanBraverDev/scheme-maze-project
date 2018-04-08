@@ -110,6 +110,7 @@
 
 (define (MazeChecker B startL exitL index)
   (cond
+    ((empty? exitL) #F)
     ((empty? startL) #F)
     ((> index (sub1(length exitL))) (MazeChecker B (rest startL) exitL 0))
     ((PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0) #T)
