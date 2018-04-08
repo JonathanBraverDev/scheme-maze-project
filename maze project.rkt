@@ -108,13 +108,17 @@
     ((equal? (list-ref L index) '_) #T)
     (else #F)))
 
-(define (MazeChecker B startL exitL index)
+(define (MazeChecker B startL exitL index validEntrances)
   (cond
     ((empty? exitL) #F)
     ((empty? startL) #F)
-    ((> index (sub1(length exitL))) (MazeChecker B (rest startL) exitL 0))
-    ((PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0) #T)
-    (else (MazeChecker B startL exitL (add1 index)))))
+    ((> index (sub1(length exitL))) (MazeChecker B (rest startL) exitL 0 validEntrances))
+    ((and (=(length startL)1) (PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0)) (cons (first startL) validEntrances))
+    ((PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0) (MazeChecker B (rest startL) exitL 0 (cons (first startL) validEntrances)))
+    (else (MazeChecker B startL exitL (add1 index) validEntrances))))
+
+(define (CheckMaze B)
+  (MazeChecker B (findEntries B 0) (findExits B 0) 0 '()))
 
 
 ;pathfinding section
@@ -165,9 +169,11 @@
 (define B1 (MazeRandomaizer (BoardSize 10 10)))
 (printBoard B1)
 (newline)
-(MazeChecker B1 (findEntries B1 0) (findExits B1 0) 0)
+(CheckMaze B1)
 (newline)(newline)
-(printBoard testBoardNO)
+(printBoard testBoardOK)
+(newline)
+(CheckMaze testBoardOK)
 
 ;demo section
 ;empty? #T ;)
