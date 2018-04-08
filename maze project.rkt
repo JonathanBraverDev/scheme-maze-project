@@ -125,10 +125,10 @@
 (define (wallFollower B startXpos startYpos targetXpos targetYpos pathL)
   (cond
     ((and (= startXpos targetXpos) (= startYpos targetYpos)) #T)
-    ((GoRight?B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpo targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoUp?   B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoLeft? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoDown? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoRight? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoUp?    B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoLeft?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((GoDown?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
     ((empty? pathL) #F)
     (else (wallFollower (updateBoard B startXpos startYpos 'U) (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
 
