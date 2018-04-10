@@ -40,6 +40,7 @@
 (define (findTile B Xpos Ypos) ;returnes a tile in a given location
   (list-ref (list-ref B Ypos) Xpos))
 
+
 ;random section
 (define (MazeRandomaizer B) ;fulls the maze with random walls (the maze isn't always passable but I'll fix that later)
   (cond
@@ -60,15 +61,19 @@
 ;turn management section
 (define (MovePlayerTo B PlayerXpos PlayerYpos Xpos Ypos)
   (cond
-    (validMove? B Xpos Ypos) (ClearTileAt PlayerXpos PlayerYpos)))
+    ((validMove? B Xpos Ypos) (updateBoard (ClearTileAt PlayerXpos PlayerYpos) Xpos Ypos 'P))
+    (else (print '(Invalid location, please try again)) (MovePlayerTo B PlayerXpos PlayerYpos (read) (read)))))
 
 (define (validMove? B Xpos Ypos)
   (cond
     ((and (legalTile? B Xpos Ypos) (equal? (findTile B Xpos Ypos) 'X)) #F)
     (else #T)))
 
-;(define (play))
-  
+(define (play)
+  (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
+  (newline)
+  (printBoard (CheckAndRegenerate (MazeRandomaizer (BoardSize (read) (read))))))
+
 
 ;board management section
 (define (updateBoard B Xpos Ypos input)
@@ -80,6 +85,11 @@
   (cond
     ((= Xpos 0) (cons input (rest L)))
     (else (cons (first L) (updateCol (rest L) (sub1 Xpos) input)))))
+
+(define (ClearTileAt B Xpos Ypos)
+  (cond
+    ((legalTile? B Xpos Ypos) (updateBoard B Xpos Ypos '_))
+    (else (print '(invalid tile)))))
 
 (define (legalTile? B Xpos Ypos)
   (cond
@@ -112,10 +122,12 @@
     ((PathFinder B (first startL) (sub1(length B)) (list-ref exitL index) 0) (MazeChecker B (rest startL) exitL 0 (cons (first startL) validEntrances)))
     (else (MazeChecker B startL exitL (add1 index) validEntrances))))
 
-(define (CheckMaze B)
-  (MazeChecker B (findEntries B 0) (findExits B 0) 0 '()))
+(define (CheckAndRegenerate B)
+  (cond
+    ((MazeChecker B (findEntries B 0) (findExits B 0) 0 '()) B)
+    (else (CheckAndRegenerate (MazeRandomaizer B)))))
 
-
+;;;;;(printBoard (mazeRegen testBoardNO))
 ;pathfinding section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
   (cond
@@ -159,21 +171,10 @@
     ((passableMaze? (updateBoard B Xpos Ypos (RandomTileGenerator))) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))
     (else (print '(sorry, but the new maze isn't passable)) (newline) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
 
-(define (ClearTileAt B Xpos Ypos)
-  (cond
-    ((legalTile? B Xpos Ypos) (updateBoard B Xpos Ypos '_))
-    (else (print '(invalid tile)))))
 
-
-;auto bord creation and printing
-(define B1 (MazeRandomaizer (BoardSize 10 10)))
-(printBoard B1)
-(newline)
-(CheckMaze B1)
-(newline)(newline)
+;startup
 (printBoard testBoardOK)
-(newline)
-(CheckMaze testBoardOK)
+
 
 ;demo section
 ;empty? #T ;)
@@ -184,15 +185,13 @@
 
 
 ;WIP notes
-;wallfollower - now it's realy a wall follower
+;(= (length) 0)
 
 ;planned commands
 ;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple (just move the printsector to the new player location)
 ;CreateMobs (creates a given amount of mobs (by some difficulty choice or by a set number from the player or by the maze size) in the maze)
 ;MoveMobs (makes the mobs move to the player location once every 2 turns (so you chould run away from them buts whould still lose if you're not cerefull)
 ;FindPath (finds a path between 2 locations and returns the next step) - still a nope... its only #T or #F for now
-;FindStart - done!
-;FindExit - done!
 ;error log - will get a function name and the given input, the function will print something like: "pintTile failed with (input) (input) (input)"
 ;reverseMaze - will change all X tiles to _ and _ to X in a given board
 ;more will follow (maybe ;))
