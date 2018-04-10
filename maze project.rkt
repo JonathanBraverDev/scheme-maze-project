@@ -2,6 +2,12 @@
 (define testBoardOK '((_ X _ _ _)(_ _ X _ X)(X X _ _ _)(_ _ _ X _)(_ X X X X))) ;a passable 5*5 maze
 (define testBoardNO '((X X _ X _)(X _ X _ X)(X X X _ X)(_ X _ X _)(_ X _ X _))) ;an unpassable 5*5 maze
 
+;start game function
+(define (play)
+  (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
+  (newline)
+  (printBoard (CheckAndRegenerate (TROLLLLLLL (MazeRandomaizer (BoardSize (read) (read)))))))
+
 ;new board creation
 (define (BoardSize length width) ;creates an empty board for the maze to be generated into
   (cond
@@ -69,21 +75,27 @@
     ((and (legalTile? B Xpos Ypos) (equal? (findTile B Xpos Ypos) 'X)) #F)
     (else #T)))
 
-(define (play)
-  (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
-  (newline)
-  (printBoard (CheckAndRegenerate (TROLLLLLLL (MazeRandomaizer (BoardSize (read) (read)))))))
-
 (define (nextTurn B PlayerXpos PlayerYpos)
   (cond
     ((= PlayerYpos 0) (print '(you win)))))
 
+;troll logs section
 (define (TROLLLLLLL B)
   (cond
-    ((= (length B) 1) (print '(you cheater.....)) (newline) (play))
-    ((= (length (first B)) 1) (print '(that's not realy a maze, is it?)) (newline) (print '(let's try that again shall we)) (play))
+    ((= (length B) 1) (print '(you cheater.....  )) (print '(let's try that again, be nice this time)) (newline) (playTrollEdition))
+    ((= (length (first B)) 1) (print '(that's not realy a maze, is it?)) (newline) (print '(read the instructions this time)) (newline) (playTrollEdition))
     (else (print '(here we go)) (newline) B)))
 
+(define (playTrollEdition)
+  (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
+  (newline)
+  (printBoard (CheckAndRegenerate (IstillDontTrustYou (MazeRandomaizer (BoardSize (read) (read)))))))
+
+(define (IstillDontTrustYou B)
+  (cond
+    ((= (length B) 1) (print '(again..... realy? )) (print '(just play by the book)) (newline) (play))
+    ((= (length (first B)) 1) (print '(it's not even funny...)) (newline) (print '(let's try that again shall we)) (newline) (play))
+    (else (print '(finally.....that's better)) (newline) B)))
 
 ;board management section
 (define (updateBoard B Xpos Ypos input)
