@@ -6,7 +6,26 @@
 (define (play)
   (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
   (newline)
-  (printBoard (CheckAndRegenerate (TROLLLLLLL (MazeRandomaizer (BoardSize (read) (read)))))))
+  (printBoard (CheckAndRegenerate (inputCorrection (MazeRandomaizer (BoardSize (read) (read)))))))
+
+(define (inputCorrection B)
+  (cond
+    ((or (> (length B) 100) (> (length (first B)) 100)) (print '(THAT maze is WAY to big, it's generation maybe very slow, continue on your own risk)) (newline) (print '(do you want to continue with this maze?)) (newline) (YorN B (read)))
+    ((= (length B) 1) (print '(you cheater.....  )) (print '(let's try that again, be nice this time)) (newline) (playTrollEdition))
+    ((= (length (first B)) 1) (print '(that's not realy a maze, is it?)) (newline) (print '(read the instructions this time)) (newline) (playTrollEdition))
+    (else (print '(here we go)) (newline) B)))
+
+(define (YorN B input)
+  (cond
+    ((equal? input 'y) B)
+    ((equal? input 'yes) B)
+    ((equal? input 'yea) B)
+    ((equal? input 'yep) B)
+    ((equal? input 'n) )
+    ((equal? input 'no) )
+    ((equal? input 'nope) )
+    (else (print '(um..... I have NO idea what you just said, please try again)) (newline) (YorN B (read)))))
+  
 
 ;new board creation
 (define (BoardSize length width) ;creates an empty board for the maze to be generated into
@@ -80,22 +99,17 @@
     ((= PlayerYpos 0) (print '(you win)))))
 
 ;troll logs section
-(define (TROLLLLLLL B)
-  (cond
-    ((= (length B) 1) (print '(you cheater.....  )) (print '(let's try that again, be nice this time)) (newline) (playTrollEdition))
-    ((= (length (first B)) 1) (print '(that's not realy a maze, is it?)) (newline) (print '(read the instructions this time)) (newline) (playTrollEdition))
-    (else (print '(here we go)) (newline) B)))
-
 (define (playTrollEdition)
   (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
   (newline)
   (printBoard (CheckAndRegenerate (IstillDontTrustYou (MazeRandomaizer (BoardSize (read) (read)))))))
 
-(define (IstillDontTrustYou B)
+(define (TROLLLLLLL B)
   (cond
     ((= (length B) 1) (print '(again..... realy? )) (print '(just play by the book)) (newline) (play))
     ((= (length (first B)) 1) (print '(it's not even funny...)) (newline) (print '(let's try that again shall we)) (newline) (play))
     (else (print '(finally.....that's better)) (newline) B)))
+
 
 ;board management section
 (define (updateBoard B Xpos Ypos input)
@@ -150,7 +164,7 @@
     ((MazeChecker B (findEntries B 0) (findExits B 0) 0 '()) B)
     (else (CheckAndRegenerate (MazeRandomaizer B)))))
 
-;;;;;(printBoard (mazeRegen testBoardNO))
+
 ;pathfinding section
 (define (PathFinder B startXpos startYpos targetXpos targetYpos)
   (cond
