@@ -72,7 +72,17 @@
 (define (play)
   (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
   (newline)
-  (printBoard (CheckAndRegenerate (MazeRandomaizer (BoardSize (read) (read))))))
+  (printBoard (CheckAndRegenerate (TROLLLLLLL (MazeRandomaizer (BoardSize (read) (read)))))))
+
+(define (nextTurn B PlayerXpos PlayerYpos)
+  (cond
+    ((= PlayerYpos 0) (print '(you win)))))
+
+(define (TROLLLLLLL B)
+  (cond
+    ((= (length B) 1) (print '(you cheater.....)) (newline) (play))
+    ((= (length (first B)) 1) (print '(that's not realy a maze, is it?)) (newline) (print '(let's try that again shall we)) (play))
+    (else (print '(here we go)) (newline) B)))
 
 
 ;board management section
@@ -115,6 +125,7 @@
 
 (define (MazeChecker B startL exitL index validEntrances)
   (cond
+    ((= (length (first B)) 1) #F)
     ((empty? exitL) #F)
     ((empty? startL) #F)
     ((> index (sub1(length exitL))) (MazeChecker B (rest startL) exitL 0 validEntrances))
