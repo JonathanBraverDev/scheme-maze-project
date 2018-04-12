@@ -6,25 +6,26 @@
 (define (play)
   (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
   (newline)
-  (printBoard (CheckAndRegenerate (inputCorrection (MazeRandomaizer (BoardSize (read) (read)))))))
+  (printBoard (CheckAndRegenerate (MazeRandomaizer (BoardSize (inputChecker (read)) (inputChecker (read)))))))
 
-(define (inputCorrection B)
+(define (inputChecker input)
   (cond
-    ((or (> (length B) 100) (> (length (first B)) 100)) (print '(THAT maze is WAY to big, it's generation maybe very slow, continue on your own risk)) (newline) (print '(do you want to continue with this maze?)) (newline) (YorN B (read)))
-    ((= (length B) 1) (print '(you cheater.....  )) (print '(let's try that again, be nice this time)) (newline) (playTrollEdition))
-    ((= (length (first B)) 1) (print '(that's not realy a maze, is it?)) (newline) (print '(read the instructions this time)) (newline) (playTrollEdition))
-    (else (print '(here we go)) (newline) B)))
+;    ((letter filtering))
+    ((< input 1) (print '(0 and below isn't a valid input)) (newline)(newline) (inputChecker (read)))
+    ((= input 1) (print '(it's too easy)) (newline) (print '(let's make it a litle more interesting)) (newline)(newline) (inputChecker (read)))
+    ((> input 50) (print '(that's a big number, it may couse the maze to generate slowly)) (newline) (print '(pick again please)) (newline)(newline) (inputChecker (read)))
+    (else input)))
 
-(define (YorN B input)
-  (cond
-    ((equal? input 'y) B)
-    ((equal? input 'yes) B)
-    ((equal? input 'yea) B)
-    ((equal? input 'yep) B)
-    ((equal? input 'n) )
-    ((equal? input 'no) )
-    ((equal? input 'nope) )
-    (else (print '(um..... I have NO idea what you just said, please try again)) (newline) (YorN B (read)))))
+;(define (YorN B input)
+;  (cond
+;    ((equal? input 'y) (printBoard (MazeRandomaizer B)))
+;    ((equal? input 'yes) (printBoard (MazeRandomaizer B)))
+;    ((equal? input 'yea) (printBoard (MazeRandomaizer B)))
+;    ((equal? input 'yep) (printBoard (MazeRandomaizer B)))
+;    ((equal? input 'n) (play))
+;    ((equal? input 'no) (play))
+;    ((equal? input 'nope) (play))
+;    (else (print '(um..... I have NO idea what you just said, please try again)) (newline) (YorN B (read)))))
   
 
 ;new board creation
@@ -98,17 +99,18 @@
   (cond
     ((= PlayerYpos 0) (print '(you win)))))
 
-;troll logs section
-(define (playTrollEdition)
-  (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
-  (newline)
-  (printBoard (CheckAndRegenerate (IstillDontTrustYou (MazeRandomaizer (BoardSize (read) (read)))))))
 
-(define (TROLLLLLLL B)
-  (cond
-    ((= (length B) 1) (print '(again..... realy? )) (print '(just play by the book)) (newline) (play))
-    ((= (length (first B)) 1) (print '(it's not even funny...)) (newline) (print '(let's try that again shall we)) (newline) (play))
-    (else (print '(finally.....that's better)) (newline) B)))
+;troll logs section
+;(define (playTrollEdition)
+;  (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
+;  (newline)
+;  (printBoard (CheckAndRegenerate (TROLLLLLLL (MazeRandomaizer (BoardSize (read) (read)))))))
+
+;(define (TROLLLLLLL B)
+;  (cond
+;    ((= (length B) 1) (print '(again..... realy? )) (print '(just play by the book)) (newline) (play))
+;    ((= (length (first B)) 1) (print '(it's not even funny...)) (newline) (print '(let's try that again shall we)) (newline) (play))
+;    (else (print '(finally.....that's better)) (newline) B)))
 
 
 ;board management section
