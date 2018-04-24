@@ -20,9 +20,9 @@
     (else input)))
 (define (inputMoveChecker PlayerXpos PlayerYpos input)
   (cond
-    ((equal? input 'W) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
+    ((equal? input 'W) (cons PlayerXpos (cons (sub1 PlayerYpos) '())))
     ((equal? input 'A) (cons (sub1 PlayerXpos) (cons PlayerYpos '())))
-    ((equal? input 'S) (cons PlayerXpos (cons (sub1 PlayerYpos) '())))
+    ((equal? input 'S) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
     ((equal? input 'D) (cons (add1 PlayerXpos) (cons PlayerYpos '())))
     (else (print '(wrong input, pleaze use W/A/S/D)) (inputMoveChecker PlayerXpos PlayerYpos (read)))))
 
@@ -100,8 +100,8 @@
 ;turn management section
 (define (MovePlayer B PlayerXpos PlayerYpos Xpos Ypos)
   (cond
-    ((validMove? B Xpos Ypos) (nextTurn (updateBoard (ClearTileAt B PlayerXpos PlayerYpos) Xpos Ypos 'P) PlayerXpos PlayerYpos))
-    (else (print '(Invalid location, please try again)) (MovePlayer B PlayerXpos PlayerYpos (read)))))
+    ((validMove? B Xpos Ypos) (nextTurn (updateBoard (ClearTileAt B PlayerXpos PlayerYpos) Xpos Ypos 'P) Xpos Ypos))
+    (else (print '(Invalid location, please try again (prees 2 times))) (MovePlayer B PlayerXpos PlayerYpos (getX(inputMoveChecker PlayerXpos PlayerYpos (read))) (getY(inputMoveChecker PlayerXpos PlayerYpos (read)))))))
 
 (define (validMove? B Xpos Ypos)
   (cond
