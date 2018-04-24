@@ -6,7 +6,7 @@
 (define (play)
   (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
   (newline)
-  (printBoard (CheckAndRegenerate (MazeRandomaizer (BoardSize (inputChecker (read)) (inputChecker (read)))))))
+  (printBoard (NewBoard)))
 
 (define (inputChecker input)
   (cond
@@ -15,6 +15,13 @@
     ((= input 1) (print '(it's too easy)) (newline) (print '(let's make it a litle more interesting)) (newline)(newline) (inputChecker (read)))
     ((> input 50) (print '(that's a big number, it may couse the maze to generate slowly)) (newline) (print '(pick again please)) (newline)(newline) (inputChecker (read)))
     (else input)))
+(define (inputMoveChecker input)
+  (cond
+    ((equal? input 'W) )
+    ((equal? input 'A) )
+    ((equal? input 'S) )
+    ((equal? input 'D) )
+    (else (print '(wrong input, pleaze use W/A/S/D)) (inputMoveChecker (read)))))
 
 ;(define (YorN B input)
 ;  (cond
@@ -29,6 +36,9 @@
   
 
 ;new board creation
+(define (NewBoard)
+  (SpawnPlayer (CheckAndRegenerate (MazeRandomaizer (BoardSize (inputChecker (read)) (inputChecker (read)))))))
+
 (define (BoardSize length width) ;creates an empty board for the maze to be generated into
   (cond
     ((= width 0) '())
@@ -85,10 +95,10 @@
 
 
 ;turn management section
-(define (MovePlayerTo B PlayerXpos PlayerYpos Xpos Ypos)
+(define (MovePlayer B PlayerXpos PlayerYpos Xpos Ypos)
   (cond
     ((validMove? B Xpos Ypos) (updateBoard (ClearTileAt PlayerXpos PlayerYpos) Xpos Ypos 'P))
-    (else (print '(Invalid location, please try again)) (MovePlayerTo B PlayerXpos PlayerYpos (read) (read)))))
+    (else (print '(Invalid location, please try again)) (MovePlayer B PlayerXpos PlayerYpos (read)))))
 
 (define (validMove? B Xpos Ypos)
   (cond
@@ -97,8 +107,20 @@
 
 (define (nextTurn B PlayerXpos PlayerYpos)
   (cond
-    ((= PlayerYpos 0) (print '(you win)))))
+    ((= PlayerYpos 0) (print '(you win)))
+    (else (print '(press the direction on your next move (W-up,S-down,A-left,D-rigth))) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker (read)))))
+  (newline)
+  (printBoard B))
 
+(define (findPlayer B Xpos Ypos)
+  (cond
+    ((= Ypos (sub1(length B))) #F)
+    ((= Xpos (sub1(length (first B)))) (findPlayer B 0 (add1 Ypos)))
+    ((equal? 'P (findTile B Xpos Ypos)) (cons Xpos (cons Ypos '())))
+    (else (findPlayer B (add1 Xpos) Ypos))))
+
+(define (SpawnPlayer B)
+  (updateBoard B (list-ref (MazeChecker B (findEntries B 0) (findExits B 0) 0 '()) (random (length (MazeChecker B (findEntries B 0) (findExits B 0) 0 '())))) (sub1(length B)) 'P))
 
 ;troll logs section
 ;(define (playTrollEdition)
@@ -212,6 +234,9 @@
 
 
 ;startup
+(define B (CheckAndRegenerate (MazeRandomaizer (BoardSize 10 10))))
+(printBoard B)
+(newline)(newline)
 (printBoard testBoardOK)
 
 
