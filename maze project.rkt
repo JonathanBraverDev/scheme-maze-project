@@ -6,7 +6,10 @@
 (define (play)
   (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
   (newline)
-  (printBoard (NewBoard)))
+  (playHelp (NewBoard)))
+
+(define (playHelp B)
+  (nextTurn B (first(findPlayer B 0)) (second(findPlayer B 0))))
 
 (define (inputChecker input)
   (cond
@@ -15,13 +18,13 @@
     ((= input 1) (print '(it's too easy)) (newline) (print '(let's make it a litle more interesting)) (newline)(newline) (inputChecker (read)))
     ((> input 50) (print '(that's a big number, it may couse the maze to generate slowly)) (newline) (print '(pick again please)) (newline)(newline) (inputChecker (read)))
     (else input)))
-(define (inputMoveChecker input)
+(define (inputMoveChecker PlayerXpos PlayerYpos input)
   (cond
-    ((equal? input 'W) )
-    ((equal? input 'A) )
-    ((equal? input 'S) )
-    ((equal? input 'D) )
-    (else (print '(wrong input, pleaze use W/A/S/D)) (inputMoveChecker (read)))))
+    ((equal? input 'W) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
+    ((equal? input 'A) (cons (sub1 PlayerXpos) (cons PlayerYpos '())))
+    ((equal? input 'S) (cons PlayerXpos (cons (sub1 PlayerYpos) '())))
+    ((equal? input 'D) (cons (add1 PlayerXpos) (cons PlayerYpos '())))
+    (else (print '(wrong input, pleaze use W/A/S/D)) (inputMoveChecker PlayerXpos PlayerYpos (read)))))
 
 ;(define (YorN B input)
 ;  (cond
@@ -97,7 +100,7 @@
 ;turn management section
 (define (MovePlayer B PlayerXpos PlayerYpos Xpos Ypos)
   (cond
-    ((validMove? B Xpos Ypos) (updateBoard (ClearTileAt PlayerXpos PlayerYpos) Xpos Ypos 'P))
+    ((validMove? B Xpos Ypos) (nextTurn (updateBoard (ClearTileAt B PlayerXpos PlayerYpos) Xpos Ypos 'P) PlayerXpos PlayerYpos))
     (else (print '(Invalid location, please try again)) (MovePlayer B PlayerXpos PlayerYpos (read)))))
 
 (define (validMove? B Xpos Ypos)
@@ -106,18 +109,17 @@
     (else #T)))
 
 (define (nextTurn B PlayerXpos PlayerYpos)
+  (printBoard B)
+  (newline)
   (cond
     ((= PlayerYpos 0) (print '(you win)))
-    (else (print '(press the direction on your next move (W-up,S-down,A-left,D-rigth))) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker (read)))))
-  (newline)
-  (printBoard B))
+    (else (print '(press the direction of your next move twice (W-up,S-down,A-left,D-rigth))) (newline) (MovePlayer B PlayerXpos PlayerYpos (getX(inputMoveChecker PlayerXpos PlayerYpos (read))) (getY(inputMoveChecker PlayerXpos PlayerYpos (read)))))))
 
-(define (findPlayer B Xpos Ypos)
+(define (findPlayer B Xpos)
   (cond
-    ((= Ypos (sub1(length B))) #F)
-    ((= Xpos (sub1(length (first B)))) (findPlayer B 0 (add1 Ypos)))
-    ((equal? 'P (findTile B Xpos Ypos)) (cons Xpos (cons Ypos '())))
-    (else (findPlayer B (add1 Xpos) Ypos))))
+    ((= Xpos (sub1(length(first B)))) #F)
+    ((equal? 'P (findTile B Xpos (sub1(length B)))) (cons Xpos (cons (sub1(length B)) '())))
+    (else (findPlayer B (add1 Xpos)))))
 
 (define (SpawnPlayer B)
   (updateBoard B (list-ref (MazeChecker B (findEntries B 0) (findExits B 0) 0 '()) (random (length (MazeChecker B (findEntries B 0) (findExits B 0) 0 '())))) (sub1(length B)) 'P))
@@ -241,7 +243,11 @@
 
 
 ;demo section
-;empty? #T ;)
+(define (getX input)
+  (first input))
+
+(define (getY input)
+  (second input))
 
 
 ;missing comands list (names in use)
