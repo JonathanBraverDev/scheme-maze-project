@@ -1,4 +1,5 @@
-(define testBoard '((_ _ _ _ _)(_ _ _ _ _)(_ _ _ _ _)(_ _ _ _ _)(_ _ _ _ _))) ;an empty 5*5 board
+(define testBoard '((_
+                     _ _ _ _)(_ _ _ _ _)(_ _ _ _ _)(_ _ _ _ _)(_ _ _ _ _))) ;an empty 5*5 board
 (define testBoardOK '((_ X _ _ _)(_ _ X _ X)(X X _ _ _)(_ _ _ X _)(_ X X X X))) ;a passable 5*5 maze
 (define testBoardNO '((X X _ X _)(X _ X _ X)(X X X _ X)(_ X _ X _)(_ X _ X _))) ;an unpassable 5*5 maze
 
@@ -98,10 +99,10 @@
 
 
 ;turn management section
-(define (MovePlayer B PlayerXpos PlayerYpos Xpos Ypos)
+(define (MovePlayer B PlayerXpos PlayerYpos XYpos)
   (cond
-    ((validMove? B Xpos Ypos) (nextTurn (updateBoard (ClearTileAt B PlayerXpos PlayerYpos) Xpos Ypos 'P) Xpos Ypos))
-    (else (print '(Invalid location, please try again (prees 2 times))) (MovePlayer B PlayerXpos PlayerYpos (getX(inputMoveChecker PlayerXpos PlayerYpos (read))) (getY(inputMoveChecker PlayerXpos PlayerYpos (read)))))))
+    ((validMove? B (getX XYpos) (getY XYpos)) (nextTurn (updateBoard (ClearTileAt B PlayerXpos PlayerYpos) (getX XYpos) (getY XYpos) 'P) (getX XYpos) (getY XYpos)))
+    (else (print '(Invalid location, please try again (prees 2 times))) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read))))))
 
 (define (validMove? B Xpos Ypos)
   (cond
@@ -113,7 +114,7 @@
   (newline)
   (cond
     ((= PlayerYpos 0) (print '(you win)))
-    (else (print '(press the direction of your next move twice (W-up,S-down,A-left,D-rigth))) (newline) (MovePlayer B PlayerXpos PlayerYpos (getX(inputMoveChecker PlayerXpos PlayerYpos (read))) (getY(inputMoveChecker PlayerXpos PlayerYpos (read)))))))
+    (else (print '(press the direction of your next move twice (W-up,S-down,A-left,D-rigth))) (newline) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read))))))
 
 (define (findPlayer B Xpos)
   (cond
@@ -236,10 +237,10 @@
 
 
 ;startup
-(define B (CheckAndRegenerate (MazeRandomaizer (BoardSize 10 10))))
-(printBoard B)
-(newline)(newline)
-(printBoard testBoardOK)
+;(define B (CheckAndRegenerate (MazeRandomaizer (BoardSize 10 10))))
+;(printBoard B)
+;(newline)(newline)
+;(printBoard testBoardOK)
 
 
 ;demo section
