@@ -3,4 +3,4 @@
 
 
 # 13.5.18
- *the maze is complete!
+ the maze is complete!
