@@ -21,9 +21,9 @@
 (define (inputMoveChecker PlayerXpos PlayerYpos input Ylength Xlength)
   (cond
     ((equal? input 'W) (cons PlayerXpos (cons (sub1 PlayerYpos) '())))
-    ((equal? input 'A) (cons (sub1 PlayerXpos) (cons PlayerYpos '())))
+    ((and (> PlayerXpos 0) (equal? input 'A)) (cons (sub1 PlayerXpos) (cons PlayerYpos '())))
     ((and (< (add1 PlayerYpos) Ylength) (equal? input 'S)) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
-    ((equal? input 'D) (cons (add1 PlayerXpos) (cons PlayerYpos '())))
+    ((and (< (add1 PlayerXpos) Xlength) (equal? input 'D)) (cons (add1 PlayerXpos) (cons PlayerYpos '())))
     (else (print '(wrong input, pleaze use W/A/S/D)) (newline) (inputMoveChecker PlayerXpos PlayerYpos (read) Ylength Xlength))))
 
 ;(define (YorN B input)
@@ -101,7 +101,7 @@
 (define (MovePlayer B PlayerXpos PlayerYpos XYpos)
   (cond
     ((validMove? B (getX XYpos) (getY XYpos)) (nextTurn (updateBoard (ClearTileAt B PlayerXpos PlayerYpos) (getX XYpos) (getY XYpos) 'P) (getX XYpos) (getY XYpos)))
-    (else (print '(Invalid location, please try again)) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read))))))
+    (else (print '(Invalid location, please try again)) (newline) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read))))))
 
 (define (validMove? B Xpos Ypos)
   (cond
@@ -236,10 +236,7 @@
 
 
 ;startup
-(define B (SpawnPlayer (CheckAndRegenerate (MazeRandomaizer (BoardSize 10 10)))))
-(printBoard B)
-(newline)(newline)
-(findPlayer B 0)
+;none
 
 
 ;demo section
