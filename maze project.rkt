@@ -18,13 +18,13 @@
     ((= input 1) (print '(it's too easy)) (newline) (print '(let's make it a litle more interesting)) (newline)(newline) (inputChecker (read)))
     ((> input 50) (print '(that's a big number, it may couse the maze to generate slowly)) (newline) (print '(pick again please)) (newline)(newline) (inputChecker (read)))
     (else input)))
-(define (inputMoveChecker PlayerXpos PlayerYpos input)
+(define (inputMoveChecker PlayerXpos PlayerYpos input Ylength)
   (cond
     ((equal? input 'W) (cons PlayerXpos (cons (sub1 PlayerYpos) '())))
     ((equal? input 'A) (cons (sub1 PlayerXpos) (cons PlayerYpos '())))
-    ((equal? input 'S) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
+    ((and (< (add1 PlayerYpos) Ylength) (equal? input 'S)) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
     ((equal? input 'D) (cons (add1 PlayerXpos) (cons PlayerYpos '())))
-    (else (print '(wrong input, pleaze use W/A/S/D)) (inputMoveChecker PlayerXpos PlayerYpos (read)))))
+    (else (print '(wrong input, pleaze use W/A/S/D)) (newline) (inputMoveChecker PlayerXpos PlayerYpos (read)))))
 
 ;(define (YorN B input)
 ;  (cond
@@ -101,7 +101,7 @@
 (define (MovePlayer B PlayerXpos PlayerYpos XYpos)
   (cond
     ((validMove? B (getX XYpos) (getY XYpos)) (nextTurn (updateBoard (ClearTileAt B PlayerXpos PlayerYpos) (getX XYpos) (getY XYpos) 'P) (getX XYpos) (getY XYpos)))
-    (else (print '(Invalid location, please try again (prees 2 times))) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read))))))
+    (else (print '(Invalid location, please try again)) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read))))))
 
 (define (validMove? B Xpos Ypos)
   (cond
@@ -113,7 +113,7 @@
   (newline)
   (cond
     ((= PlayerYpos 0) (print '(you win)))
-    (else (print '(press the direction of your next move twice (W-up,S-down,A-left,D-rigth))) (newline) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read))))))
+    (else (print '(press the direction of your next move (W-up,S-down,A-left,D-rigth))) (newline) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read) (length B))))))
 
 (define (findPlayer B Xpos)
   (cond
