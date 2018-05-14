@@ -13,7 +13,7 @@
 
 (define (inputChecker input)
   (cond
-;    ((letter filtering))
+    ((not(integer? input)) (print '(enter an integer)) (newline))
     ((< input 1) (print '(0 and below isn't a valid input)) (newline)(newline) (inputChecker (read)))
     ((= input 1) (print '(it's too easy)) (newline) (print '(let's make it a litle more interesting)) (newline)(newline) (inputChecker (read)))
     ((> input 50) (print '(that's a big number, it may couse the maze to generate slowly)) (newline) (print '(pick again please)) (newline)(newline) (inputChecker (read)))
