@@ -24,7 +24,7 @@
     ((equal? input 'A) (cons (sub1 PlayerXpos) (cons PlayerYpos '())))
     ((and (< (add1 PlayerYpos) Ylength) (equal? input 'S)) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
     ((equal? input 'D) (cons (add1 PlayerXpos) (cons PlayerYpos '())))
-    (else (print '(wrong input, pleaze use W/A/S/D)) (newline) (inputMoveChecker PlayerXpos PlayerYpos (read)))))
+    (else (print '(wrong input, pleaze use W/A/S/D)) (newline) (inputMoveChecker PlayerXpos PlayerYpos (read) Ylength))))
 
 ;(define (YorN B input)
 ;  (cond
