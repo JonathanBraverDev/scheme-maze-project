@@ -18,13 +18,13 @@
     ((= input 1) (print '(it's too easy)) (newline) (print '(let's make it a litle more interesting)) (newline)(newline) (inputChecker (read)))
     ((> input 50) (print '(that's a big number, it may couse the maze to generate slowly)) (newline) (print '(pick again please)) (newline)(newline) (inputChecker (read)))
     (else input)))
-(define (inputMoveChecker PlayerXpos PlayerYpos input Ylength)
+(define (inputMoveChecker PlayerXpos PlayerYpos input Ylength Xlength)
   (cond
     ((equal? input 'W) (cons PlayerXpos (cons (sub1 PlayerYpos) '())))
     ((equal? input 'A) (cons (sub1 PlayerXpos) (cons PlayerYpos '())))
     ((and (< (add1 PlayerYpos) Ylength) (equal? input 'S)) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
     ((equal? input 'D) (cons (add1 PlayerXpos) (cons PlayerYpos '())))
-    (else (print '(wrong input, pleaze use W/A/S/D)) (newline) (inputMoveChecker PlayerXpos PlayerYpos (read) Ylength))))
+    (else (print '(wrong input, pleaze use W/A/S/D)) (newline) (inputMoveChecker PlayerXpos PlayerYpos (read) Ylength Xlength))))
 
 ;(define (YorN B input)
 ;  (cond
@@ -113,12 +113,12 @@
   (newline)
   (cond
     ((= PlayerYpos 0) (print '(you win)))
-    (else (print '(press the direction of your next move (W-up,S-down,A-left,D-rigth))) (newline) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read) (length B))))))
+    (else (print '(press the direction of your next move (W-up,S-down,A-left,D-rigth))) (newline) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read) (length B) (length (first B)))))))
 
 (define (findPlayer B Xpos)
   (cond
-    ((= Xpos (sub1(length(first B)))) #F)
     ((equal? 'P (findTile B Xpos (sub1(length B)))) (cons Xpos (cons (sub1(length B)) '())))
+    ((= Xpos (sub1(length(first B)))) #F)
     (else (findPlayer B (add1 Xpos)))))
 
 (define (SpawnPlayer B)
@@ -236,10 +236,10 @@
 
 
 ;startup
-;(define B (CheckAndRegenerate (MazeRandomaizer (BoardSize 10 10))))
-;(printBoard B)
-;(newline)(newline)
-;(printBoard testBoardOK)
+(define B (SpawnPlayer (CheckAndRegenerate (MazeRandomaizer (BoardSize 10 10)))))
+(printBoard B)
+(newline)(newline)
+(findPlayer B 0)
 
 
 ;demo section
