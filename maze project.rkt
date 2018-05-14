@@ -101,7 +101,7 @@
 (define (MovePlayer B PlayerXpos PlayerYpos XYpos)
   (cond
     ((validMove? B (getX XYpos) (getY XYpos)) (nextTurn (updateBoard (ClearTileAt B PlayerXpos PlayerYpos) (getX XYpos) (getY XYpos) 'P) (getX XYpos) (getY XYpos)))
-    (else (print '(Invalid location, please try again)) (newline) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read))))))
+    (else (print '(Invalid location, please try again)) (newline) (MovePlayer B PlayerXpos PlayerYpos (inputMoveChecker PlayerXpos PlayerYpos (read) (length B) (length (first B)))))))
 
 (define (validMove? B Xpos Ypos)
   (cond
