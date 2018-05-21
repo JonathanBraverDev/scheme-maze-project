@@ -27,19 +27,8 @@
     ((= input 1) (print '(it's too easy)) (newline) (print '(let's make it a litle more interesting)) (newline)(newline) (inputChecker (read)))
     ((> input 50) (print '(that's a big number, it may couse the maze to generate slowly)) (newline) (print '(pick again please)) (newline)(newline) (inputChecker (read)))
     (else input)))
-
-;(define (YorN B input)
-;  (cond
-;    ((equal? input 'y) (printBoard (MazeRandomaizer B)))
-;    ((equal? input 'yes) (printBoard (MazeRandomaizer B)))
-;    ((equal? input 'yea) (printBoard (MazeRandomaizer B)))
-;    ((equal? input 'yep) (printBoard (MazeRandomaizer B)))
-;    ((equal? input 'n) (play))
-;    ((equal? input 'no) (play))
-;    ((equal? input 'nope) (play))
-;    (else (print '(um..... I have NO idea what you just said, please try again)) (newline) (YorN B (read)))))
-  
-
+    
+    
 ;new board creation
 (define (NewBoard)
   (SpawnPlayer (CheckAndRegenerate (MazeRandomaizer (BoardSize (inputChecker (read)) (inputChecker (read)))))))
@@ -124,18 +113,6 @@
     ((and (< (add1 PlayerYpos) Ylength) (equal? input 'S)) (cons PlayerXpos (cons (add1 PlayerYpos) '())))
     ((and (< (add1 PlayerXpos) Xlength) (equal? input 'D)) (cons (add1 PlayerXpos) (cons PlayerYpos '())))
     (else (print '(wrong input, pleaze use W/A/S/D)) (newline) (inputMoveChecker PlayerXpos PlayerYpos (read) Ylength Xlength))))
-
-;troll logs section
-;(define (playTrollEdition)
-;  (print '(Enter the size of the board (it dosen't have to be a square), the recomended size is up to 15*15. the first number is the width and the second one in the length of the maze))
-;  (newline)
-;  (printBoard (CheckAndRegenerate (TROLLLLLLL (MazeRandomaizer (BoardSize (read) (read)))))))
-
-;(define (TROLLLLLLL B)
-;  (cond
-;    ((= (length B) 1) (print '(again..... realy? )) (print '(just play by the book)) (newline) (play))
-;    ((= (length (first B)) 1) (print '(it's not even funny...)) (newline) (print '(let's try that again shall we)) (newline) (play))
-;    (else (print '(finally.....that's better)) (newline) B)))
 
 
 ;board management section
@@ -246,20 +223,3 @@
 
 (define (getY input)
   (second input))
-
-
-;missing comands list (names in use)
-;none!!! yay!!!
-
-
-;WIP notes
-;(= (length) 0)
-
-;planned commands
-;MoveCam (moves the 5*5 visible maze to the player position (just gives the PrintSector the player pos us input)) => maybe I don't need that..... it’s way to simple (just move the printsector to the new player location)
-;CreateMobs (creates a given amount of mobs (by some difficulty choice or by a set number from the player or by the maze size) in the maze)
-;MoveMobs (makes the mobs move to the player location once every 2 turns (so you chould run away from them buts whould still lose if you're not cerefull)
-;FindPath (finds a path between 2 locations and returns the next step) - still a nope... its only #T or #F for now
-;error log - will get a function name and the given input, the function will print something like: "pintTile failed with (input) (input) (input)"
-;reverseMaze - will change all X tiles to _ and _ to X in a given board
-;more will follow (maybe ;))
