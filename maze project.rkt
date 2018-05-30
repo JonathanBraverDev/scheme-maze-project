@@ -178,32 +178,17 @@
 (define (wallFollower B startXpos startYpos targetXpos targetYpos pathL)
   (cond
     ((and (= startXpos targetXpos) (= startYpos targetYpos)) #T)
-    ((GoRight? B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (sub1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoUp?    B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (sub1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoLeft?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) (add1 startXpos) startYpos targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
-    ((GoDown?  B startXpos startYpos) (wallFollower (updateBoard B startXpos startYpos 'U) startXpos (add1 startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
+    ((FollowDir B startXpos startYpos checkList) (wallFollower (updateBoard B startXpos startYpos 'U) (+ (first (FollowDir B startXpos startYpos checkList)) startXpos) (+ (second (FollowDir B startXpos startYpos checkList)) startYpos) targetXpos targetYpos (cons (cons startXpos (cons startYpos '())) pathL)))
     ((empty? pathL) #F)
     (else (wallFollower (updateBoard B startXpos startYpos 'U) (first(first(reverse pathL))) (first(rest(first(reverse pathL)))) targetXpos targetYpos (reverse(rest(reverse pathL)))))))
 
-(define (GoUp? B startXpos startYpos)
-  (cond
-    ((and (legalTile? B startXpos (sub1 startYpos)) (not (or (equal? (findTile B startXpos (sub1 startYpos)) 'U) (equal? (findTile B startXpos (sub1 startYpos)) 'X)))) #T)
-    (else #F )))
+(define checkList '((0 -1) (1 0) (-1 0) (0 1)))
 
-(define (GoDown? B startXpos startYpos)
+(define (FollowDir B startXpos startYpos checkList)
   (cond
-    ((and (legalTile? B startXpos (add1 startYpos)) (not (or (equal? (findTile B startXpos (add1 startYpos)) 'U) (equal? (findTile B startXpos (add1 startYpos)) 'X)))) #T)
-    (else #F)))
-
-(define (GoLeft? B startXpos startYpos)
-  (cond
-    ((and (legalTile? B (add1 startXpos) startYpos) (not (or (equal? (findTile B (add1 startXpos) startYpos) 'U) (equal? (findTile B (add1 startXpos) startYpos) 'X)))) #T)
-    (else #F)))
-
-(define (GoRight? B startXpos startYpos)
-  (cond
-    ((and (legalTile? B (sub1 startXpos) startYpos) (not (or (equal? (findTile B (sub1 startXpos) startYpos) 'U) (equal? (findTile B (sub1 startXpos) startYpos) 'X)))) #T)
-    (else #F)))
+    ((empty? checkList) #F)
+    ((and (legalTile? B (+ (first(first checkList)) startXpos) (+ (second(first checkList)) startYpos)) (equal? (findTile B  (+ (first(first checkList)) startXpos) (+ (second(first checkList)) startYpos)) '_)) (first checkList))
+    (else (FollowDir B startXpos startYpos (rest checkList)))))
 
 
 ;"admin" commands section
@@ -213,8 +198,9 @@
     (else (print '(sorry, but the new maze isn't passable)) (newline) (printBoard (updateBoard B Xpos Ypos (RandomTileGenerator))))))
 
 
+
 ;startup
-;none
+(printBoard (SpawnPlayer (CheckAndRegenerate (MazeRandomaizer (BoardSize 10 10))))) ;random (valid) maze 10*10 with a (again... valid) player spawn
 
 
 ;demo section
